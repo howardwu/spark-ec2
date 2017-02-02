@@ -65,7 +65,7 @@ following options are worth pointing out:
 
 -   `--instance-type=<instance-type>` can be used to specify an EC2
 instance type to use. For now, the script only supports 64-bit instance
-types, and the default type is `m3.large` (which has 2 cores and 7.5 GB
+types, and the default type is `m1.large` (which has 2 cores and 7.5 GB
 RAM). Refer to the Amazon pages about [EC2 instance
 types](http://aws.amazon.com/ec2/instance-types) and [EC2
 pricing](http://aws.amazon.com/ec2/#pricing) for information about other
@@ -148,7 +148,7 @@ as JVM options. This file needs to be copied to **every machine** to reflect the
 do this is to use a script we provide called `copy-dir`. First edit your `spark-env.sh` file on the master, 
 then run `~/spark-ec2/copy-dir /root/spark/conf` to RSYNC it to all the workers.
 
-The [configuration guide](http://spark.apache.org/docs/latest/configuration.html) describes the available configuration options.
+The [configuration guide](configuration.html) describes the available configuration options.
 
 ## Terminating a Cluster
 
@@ -197,6 +197,15 @@ EC2. These scripts are intended to be used by the default Spark AMI and is *not*
 expected to work on other AMIs. If you wish to start a cluster using Spark,
 please refer to http://spark-project.org/docs/latest/ec2-scripts.html 
 
+## Using S3 with Hadoop 2.6 or newer
+
+Starting Hadoop 2.6.0, s3 FS connector has been moved to a separate library called hadoop-aws. 
+
+- In order to make the package available add it as a dependency, `libraryDependencies += "org.apache.hadoop" % "hadoop-aws" % "2.6.4"`.
+- It can also be added it directly to spark-submit, `spark-submit --packages org.apache.hadoop:hadoop-aws:2.6.4 SimpleApp.py`.
+
+On other related note, it is recommended to use `s3a` and not `s3n` filesystem starting Hadoop 2.6.0.
+
 ## spark-ec2 Internals
 
 The Spark cluster setup is guided by the values set in `ec2-variables.sh`.`setup.sh`
@@ -237,3 +246,4 @@ after the templates have been configured. You can use the environment variables 
 get a list of slave hostnames and `/root/spark-ec2/copy-dir` to sync a directory across machines.
 
 5. Modify `spark_ec2.py` to add your module to the list of enabled modules.
+
